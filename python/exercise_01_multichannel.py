@@ -49,7 +49,7 @@ if __name__ == "__main__":
 
     # Length of the EEG data buffer (in seconds)
     # This buffer will hold last n seconds of data and be used for calculations
-    buffer_length = 15
+    buffer_length = 30
 
     # Length of the epochs used to compute the FFT (in seconds)
     epoch_length = 1
@@ -105,8 +105,19 @@ if __name__ == "__main__":
             eeg_data, timestamp = inlet.pull_chunk(
                     timeout=1, max_samples=int(shift_length * fs))
 
+            #print(eeg_data)
+
             # Only keep the channel we're interested in
             ch_data = np.array(eeg_data)[:, index_channel]
+
+            # re-referencing to one of the channels behind the ears
+            new_reference = 3
+            for vector in ch_data:
+                vector[0] = vector[0] - vector[new_reference]
+                vector[1] = vector[1] - vector[new_reference]
+                vector[2] = vector[2] - vector[new_reference]
+                vector[3] = vector[3] - vector[new_reference]
+            print("data: ", ch_data)
 
             # Update EEG buffer
             eeg_buffer, filter_state = BCIw.update_buffer(
@@ -117,6 +128,7 @@ if __name__ == "__main__":
             # Get newest samples from the buffer
             data_epoch = BCIw.get_last_data(eeg_buffer,
                                             epoch_length * fs)
+
 
             # Compute features
             feat_vector = BCIw.compute_feature_vector(data_epoch, fs)
