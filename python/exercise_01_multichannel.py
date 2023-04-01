@@ -117,7 +117,7 @@ if __name__ == "__main__":
                 vector[1] = vector[1] - vector[new_reference]
                 vector[2] = vector[2] - vector[new_reference]
                 vector[3] = vector[3] - vector[new_reference]
-            print("data: ", ch_data)
+            # print("data: ", ch_data)
 
             # Update EEG buffer
             eeg_buffer, filter_state = BCIw.update_buffer(
