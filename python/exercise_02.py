@@ -90,7 +90,16 @@ if __name__ == "__main__":
     BCIw.beep()
     eeg_data0, timestamps0 = inlet.pull_chunk(
             timeout=training_length+1, max_samples=fs * training_length)
+    # re-referencing to one of the channels behind the ears
+    new_reference = 3
+    for vector in eeg_data0:
+        vector[0] = vector[0] - vector[new_reference]
+        vector[1] = vector[1] - vector[new_reference]
+        vector[2] = vector[2] - vector[new_reference]
+        #vector[3] = vector[3] - vector[new_reference] + 1.0
+    print(eeg_data0)
     eeg_data0 = np.array(eeg_data0)[:, index_channel]
+    
 
     print('\nClose your eyes!\n')
 
@@ -98,7 +107,14 @@ if __name__ == "__main__":
     BCIw.beep()  # Beep sound
     eeg_data1, timestamps1 = inlet.pull_chunk(
             timeout=training_length+1, max_samples=fs * training_length)
+    new_reference = 3
+    for vector in eeg_data1:
+        vector[0] = vector[0] - vector[new_reference]
+        vector[1] = vector[1] - vector[new_reference]
+        vector[2] = vector[2] - vector[new_reference]
+        #vector[3] = vector[3] - vector[new_reference] + 1.0
     eeg_data1 = np.array(eeg_data1)[:, index_channel]
+    
 
     # Divide data into epochs
     eeg_epochs0 = BCIw.epoch(eeg_data0, epoch_length * fs,
